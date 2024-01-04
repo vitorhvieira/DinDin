@@ -1,0 +1,946 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Projeto DinDin (Desafio Modulo 3)",
+    "description": "RESTful API para um sistema de transação.",
+    "contact": {
+      "url": "https://github.com/vitorhvieira"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/",
+      "description": "Servidor para testes localmente."
+    }
+  ],
+  "paths": {
+    "/usuario": {
+      "post": {
+        "summary": "Cadastrar usuário",
+        "tags": ["Usuario"],
+        "description": "Cadastra um novo usuário no sistema.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/usuarioEntrada"
+              },
+              "example": {
+                "nome": "Novo Usuario",
+                "email": "novoUsario@gmail.com",
+                "senha": "senhaSegura"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/usuarioSaida"
+                },
+                "example": {
+                  "id": 1,
+                  "nome": "Novo Usuario",
+                  "email": "novoUsario@gmail.com"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Nome": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Email": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Senha": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Email Duplicado": {
+                    "value": {
+                      "mensagem": "Já existe usuário cadastrado com o e-mail informado."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Detalhar usuário",
+        "tags": ["Usuario"],
+        "description": "Detalha o usuário através do Token gerado no login.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/usuarioSaida"
+                },
+                "example": {
+                  "id": 1,
+                  "nome": "Novo Usuario",
+                  "email": "novoUsario@gmail.com"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Para acessar este recurso um token de autenticação válido deve ser enviado."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar usuário",
+        "tags": ["Usuario"],
+        "description": "Atualiza o usuário através do Token gerado no login",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/usuarioEntrada"
+              },
+              "example": {
+                "nome": "Novo Usuario Atualizado",
+                "email": "novoUsarioAtualizado@gmail.com",
+                "senha": "senhaSegura"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Nome": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Email": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Senha": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Email Duplicado": {
+                    "value": {
+                      "mensagem": "O e-mail informado já está sendo utilizado por outro usuário."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Para acessar este recurso um token de autenticação válido deve ser enviado."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Fazer login",
+        "tags": ["Login"],
+        "description": "Realizar o login e gera um token de autenticação.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/usuarioLogin"
+              },
+              "example": {
+                "email": "novoUsario@gmail.com",
+                "senha": "senhaSegura"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/usuarioToken"
+                },
+                "example": {
+                  "usuario": {
+                    "id": 1,
+                    "nome": "Novo Usuario",
+                    "email": "novoUsario@gmail.com"
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzAwNjczNzI2LCJleHAiOjE3MDA3MDI1MjZ9.ZTpfNDF5ooH1V86eoVd2EWIOw71qyaG4cFB_BUnID0U"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Email": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  },
+                  "Senha": {
+                    "value": {
+                      "mensagem": "Preencha todos os dados corretamente!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Email e/ou senha inválido(s)."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categoria": {
+      "get": {
+        "summary": "Listagem das categorias cadastradas",
+        "description": "Essa rota é responsável pela listagem das categorias cadastradas no banco de dados.",
+        "tags": ["Categoria"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Categoria"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "descricao": "Alimentação"
+                  },
+                  {
+                    "id": 2,
+                    "descricao": "Assinaturas e Serviços"
+                  },
+                  {
+                    "id": 3,
+                    "descricao": "Casa"
+                  },
+                  {
+                    "id": 4,
+                    "descricao": "Mercado"
+                  },
+                  {
+                    "id": 5,
+                    "descricao": "Cuidados Pessoais"
+                  },
+                  {
+                    "id": 6,
+                    "descricao": "Educação"
+                  },
+                  {
+                    "id": 7,
+                    "descricao": "Família"
+                  },
+                  {
+                    "id": 8,
+                    "descricao": "Lazer"
+                  },
+                  {
+                    "id": 9,
+                    "descricao": "Pets"
+                  },
+                  {
+                    "id": 10,
+                    "descricao": "Presentes"
+                  },
+                  {
+                    "id": 11,
+                    "descricao": "Roupas"
+                  },
+                  {
+                    "id": 12,
+                    "descricao": "Saúde"
+                  },
+                  {
+                    "id": 13,
+                    "descricao": "Transporte"
+                  },
+                  {
+                    "id": 14,
+                    "descricao": "Salário"
+                  },
+                  {
+                    "id": 15,
+                    "descricao": "Vendas"
+                  },
+                  {
+                    "id": 16,
+                    "descricao": "Outras receitas"
+                  },
+                  {
+                    "id": 17,
+                    "descricao": "Outras despesas"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Erro interno do servidor."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transacao": {
+      "post": {
+        "summary": "Cadastrar Transação",
+        "tags": ["Transação"],
+        "description": "Cadastra uma nova Transação no sistema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transacao"
+              },
+              "example": {
+                "tipo": "entrada",
+                "descricao": "Alguma descricao",
+                "valor": 300000,
+                "data": "2022-03-24T15:30:00.000Z",
+                "categoria_id": 5
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transacaoSaida"
+                },
+                "example": {
+                  "id": 1,
+                  "tipo": "entrada",
+                  "descricao": "Alguma descricao",
+                  "valor": 300000,
+                  "data": "2022-03-24T15:30:00.000Z",
+                  "categoria_id": 5
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Para acessar este recurso um token de autenticação válido deve ser enviado."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transacao/{id}": {
+      "get": {
+        "summary": "Listar Transação",
+        "tags": ["Transação"],
+        "description": "Lista todos as transações do usuario cadastrados no sistema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Id da transação."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/transacao"
+                  }
+                },
+                "example": {
+                  "id": 1,
+                  "tipo": "saida",
+                  "descricao": "Sapato amarelo",
+                  "valor": 15800,
+                  "data": "2022-03-23T15:35:00.000Z",
+                  "usuario_id": 5,
+                  "categoria_id": 4,
+                  "categoria_nome": "Roupas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Transação não encontrada."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Erro interno do servidor."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar Transação",
+        "tags": ["Transação"],
+        "description": "Atualiza a transação no sistema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Id da transação que deseja atualizar."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transacao"
+              },
+              "example": {
+                "descricao": "Sapato amarelo",
+                "valor": 15800,
+                "data": "2022-03-23 12:35:00",
+                "categoria_id": 4,
+                "tipo": "saida"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transacaoSaida"
+                },
+                "example": {
+                  "id": 1,
+                  "tipo": "entrada",
+                  "descricao": "Alguma descricao",
+                  "valor": 300000,
+                  "data": "2022-03-24T15:30:00.000Z",
+                  "categoria_id": 5
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Para acessar este recurso um token de autenticação válido deve ser enviado."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar Transação",
+        "tags": ["Transação"],
+        "description": "Deletar a transação no sistema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Id da transação que deseja deletar."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Transação não encontrada."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Falha interna do servidor!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transacao/extrato": {
+      "get": {
+        "summary": "Listar Transação",
+        "tags": ["Transação"],
+        "description": "Lista todos as transações do usuario cadastrados no sistema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/extrato"
+                  }
+                },
+                "example": [
+                  {
+                    "entrada": 300000,
+                    "saida": 15800
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Unauthorized",
+            "content": {
+              "application/Json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Transação não encontrada."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "mensagem": "Erro interno do servidor."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "usuarioEntrada": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        },
+        "required": ["nome", "email", "senha"]
+      },
+      "usuarioSaida": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "usuarioLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "senha"]
+      },
+      "usuarioToken": {
+        "type": "object",
+        "properties": {
+          "usuario": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "nome": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "transacao": {
+        "type": "object",
+        "properties": {
+          "tipo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "valor": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "string"
+          },
+          "categoria_id": {
+            "type": "integer"
+          }
+        },
+        "required": ["tipo", "descricao", "valor", "data", "categoria_id"]
+      },
+      "transacaoSaida": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "tipo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "valor": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "string"
+          },
+          "categoria_id": {
+            "type": "integer"
+          }
+        },
+        "required": ["tipo", "descricao", "valor", "data", "categoria_id"]
+      },
+      "Categoria": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "descricao": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "extrato": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "entrada": {
+              "type": "number"
+            },
+            "saida": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
